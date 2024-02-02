@@ -1,0 +1,37 @@
+<%= form_with(model: itinerary_item) do |form| %>
+  <% if itinerary_item.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(itinerary_item.errors.count, "error") %> prohibited this itinerary_item from being saved:</h2>
+
+      <ul>
+        <% itinerary_item.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :title, style: "display: block" %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div>
+    <%= form.label :description, style: "display: block" %>
+    <%= form.text_area :description %>
+  </div>
+
+  <div>
+    <%= form.label :date, style: "display: block" %>
+    <%= form.date_field :date %>
+  </div>
+
+  <div>
+    <%= form.label :trip_id, style: "display: block" %>
+    <%= form.text_field :trip_id %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

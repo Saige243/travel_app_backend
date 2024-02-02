@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Itinerary items</h1>
+
+<div id="itinerary_items">
+  <% @itinerary_items.each do |itinerary_item| %>
+    <%= render itinerary_item %>
+    <p>
+      <%= link_to "Show this itinerary item", itinerary_item %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New itinerary item", new_itinerary_item_path %>

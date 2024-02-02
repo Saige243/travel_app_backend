@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @itinerary_item %>
+
+<div>
+  <%= link_to "Edit this itinerary item", edit_itinerary_item_path(@itinerary_item) %> |
+  <%= link_to "Back to itinerary items", itinerary_items_path %>
+
+  <%= button_to "Destroy this itinerary item", @itinerary_item, method: :delete %>
+</div>
