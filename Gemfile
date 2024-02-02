@@ -68,4 +68,4 @@ end
 
 gem 'devise'
 
-gem 'rack-cors'
+gem 'rack-cors', require: 'rack/cors'
