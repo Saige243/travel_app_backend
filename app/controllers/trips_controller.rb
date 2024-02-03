@@ -3,7 +3,8 @@ class TripsController < ApplicationController
 
   # GET /trips or /trips.json
   def index
-    @trips = Trip.all
+    @trips = current_user.trips
+    render json: @trips
   end
 
   # GET /trips/1 or /trips/1.json
@@ -21,7 +22,8 @@ class TripsController < ApplicationController
 
   # POST /trips or /trips.json
   def create
-    @trip = Trip.new(trip_params)
+    @trip = current_user.trips.new(trip_params)
+
 
     respond_to do |format|
       if @trip.save
@@ -65,6 +67,6 @@ class TripsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def trip_params
-      params.require(:trip).permit(:title, :description, :user_id)
+      params.require(:trip).permit(:title, :description, :user_id, :location, :start_date, :end_date)
     end
 end
