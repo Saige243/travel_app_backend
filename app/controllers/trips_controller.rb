@@ -9,6 +9,7 @@ class TripsController < ApplicationController
 
   # GET /trips/1 or /trips/1.json
   def show
+    render json: @trip
   end
 
   # GET /trips/new
@@ -63,6 +64,8 @@ class TripsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_trip
       @trip = Trip.find(params[:id])
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: "Trip not found" }, status: :not_found
     end
 
     # Only allow a list of trusted parameters through.
