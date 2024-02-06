@@ -1,5 +1,7 @@
 class PackingListItemsController < ApplicationController
   before_action :set_trip
+  before_action :set_packing_list_item, only: [:update, :destroy]
+
 
   def index
     @trip = Trip.find(params[:trip_id])
@@ -8,7 +10,6 @@ class PackingListItemsController < ApplicationController
   end
 
   def create
-    # Check if the parameters include an array of items or just a single item
     if params[:packing_list_items]
       create_multiple
     else
@@ -16,8 +17,15 @@ class PackingListItemsController < ApplicationController
     end
   end
 
+  def update
+    if @packing_list_item.update(packing_list_item_params)
+      render json: @packing_list_item, status: :ok
+    else
+      render json: @packing_list_item.errors, status: :unprocessable_entity
+    end
+  end
+
   def destroy
-    @packing_list_item = @trip.packing_list_items.find(params[:id])
     @packing_list_item.destroy
     render json: { message: "Item successfully deleted." }, status: :ok
   end
@@ -26,6 +34,10 @@ class PackingListItemsController < ApplicationController
 
   def set_trip
     @trip = Trip.find(params[:trip_id])
+  end
+
+  def set_packing_list_item
+    @packing_list_item = @trip.packing_list_items.find(params[:id])
   end
 
   def packing_list_item_params
