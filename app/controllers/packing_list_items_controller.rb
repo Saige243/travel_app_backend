@@ -41,7 +41,7 @@ class PackingListItemsController < ApplicationController
   end
 
   def packing_list_item_params
-    params.require(:packing_list_item).permit(:category, :description)
+    params.require(:packing_list_item).permit(:category, :description, :packed)
   end
 
   # Handles creating a single packing list item
