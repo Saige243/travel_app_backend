@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :itinerary_items
   resources :trips do
     resources :packing_list_items, only: [:index, :create, :update, :destroy]
+    resources :accommodations, only: [:index, :create, :update, :destroy]
   end
 
   # Health check route
