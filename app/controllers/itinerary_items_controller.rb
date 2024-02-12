@@ -1,59 +1,45 @@
 class ItineraryItemsController < ApplicationController
-  before_action :set_itinerary_item, only: %i[ show edit update destroy ]
+  before_action :set_itinerary_item, only: %i[show update destroy]
 
   # GET /itinerary_items or /itinerary_items.json
   def index
-    @itinerary_items = ItineraryItem.all
+    @trip = Trip.find(params[:trip_id])
+    @itinerary_items = @trip.itinerary_items
+    render json: @itinerary_items
   end
+
 
   # GET /itinerary_items/1 or /itinerary_items/1.json
   def show
-  end
-
-  # GET /itinerary_items/new
-  def new
-    @itinerary_item = ItineraryItem.new
-  end
-
-  # GET /itinerary_items/1/edit
-  def edit
+    render json: @itinerary_item
   end
 
   # POST /itinerary_items or /itinerary_items.json
   def create
-    @itinerary_item = ItineraryItem.new(itinerary_item_params)
-
-    respond_to do |format|
-      if @itinerary_item.save
-        format.html { redirect_to itinerary_item_url(@itinerary_item), notice: "Itinerary item was successfully created." }
-        format.json { render :show, status: :created, location: @itinerary_item }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @itinerary_item.errors, status: :unprocessable_entity }
-      end
+    if params[:itinerary_items]
+      create_multiple
+    elsif params[:itinerary_item]
+      create_single
+    else
+      render json: { error: 'Invalid parameters' }, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /itinerary_items/1 or /itinerary_items/1.json
   def update
-    respond_to do |format|
-      if @itinerary_item.update(itinerary_item_params)
-        format.html { redirect_to itinerary_item_url(@itinerary_item), notice: "Itinerary item was successfully updated." }
-        format.json { render :show, status: :ok, location: @itinerary_item }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @itinerary_item.errors, status: :unprocessable_entity }
-      end
+    if @itinerary_item.update(itinerary_item_params)
+      render json: @itinerary_item, status: :ok
+    else
+      render json: @itinerary_item.errors, status: :unprocessable_entity
     end
   end
 
   # DELETE /itinerary_items/1 or /itinerary_items/1.json
   def destroy
-    @itinerary_item.destroy!
-
-    respond_to do |format|
-      format.html { redirect_to itinerary_items_url, notice: "Itinerary item was successfully destroyed." }
-      format.json { head :no_content }
+    if @itinerary_item.destroy
+      render json: { notice: 'Itinerary item was successfully destroyed.' }, status: :ok
+    else
+      render json: { error: 'Failed to destroy the itinerary item.' }, status: :unprocessable_entity
     end
   end
 
@@ -65,6 +51,43 @@ class ItineraryItemsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def itinerary_item_params
-      params.require(:itinerary_item).permit(:title, :description, :date, :trip_id)
+      params.require(:itinerary_item).permit(:title, :description, :time, :date, :location, :trip_id)
     end
+
+    def create_single
+      @itinerary_item = ItineraryItem.new(itinerary_item_single_params)
+      if @itinerary_item.save
+        render json: @itinerary_item, status: :created
+      else
+        render json: @itinerary_item.errors, status: :unprocessable_entity
+      end
+    end
+
+    def create_multiple
+      items_params = params.require(:itinerary_items).map do |item_params|
+        item_params.permit(:title, :description, :time, :date, :location, :trip_id)
+      end
+
+      ActiveRecord::Base.transaction do
+        items_params = params.require(:itinerary_items).map do |item|
+          item.permit(:title, :description, :time, :date, :location, :trip_id)
+        end
+
+        @itinerary_items = ItineraryItem.create!(items_params)
+      end
+
+      if @itinerary_items.all?(&:persisted?)
+        render json: @itinerary_items, status: :created
+      else
+        render json: { errors: "Some items failed to save." }, status: :unprocessable_entity
+      end
+    rescue ActiveRecord::RecordInvalid => e
+      render json: { errors: e.message }, status: :unprocessable_entity
+    end
+
+    def itinerary_item_single_params
+      params.require(:itinerary_item).permit(:title, :description, :time, :date, :location, :trip_id)
+    end
+
+
 end

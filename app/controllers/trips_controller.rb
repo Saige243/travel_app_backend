@@ -9,7 +9,7 @@ class TripsController < ApplicationController
 
   # GET /trips/1 or /trips/1.json
   def show
-    render json: @trip.as_json(include: [:packing_list_items, :accommodations])
+    render json: @trip.as_json(include: [:packing_list_items, :accommodations, :itinerary_items])
   end
 
   # GET /trips/new
