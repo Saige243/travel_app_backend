@@ -16,6 +16,9 @@ Rails.application.routes.draw do
   get 'profile', to: 'users#show'
   patch 'profile', to: 'users#update'
 
+    # Authentication check route
+    get 'auth/logged_in', to: 'authentication#logged_in'
+
   # Optionally define a root path
   # root "some_controller#index"
 end
