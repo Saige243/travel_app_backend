@@ -69,3 +69,7 @@ end
 gem 'devise'
 
 gem 'rack-cors', require: 'rack/cors'
+
+gem 'jwt'
+
+gem 'dotenv-rails'
